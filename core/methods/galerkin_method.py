@@ -1,59 +1,79 @@
 import sympy as sp
 import numpy as np
+# Certifique-se de que a importação de NumericalMethod está correta
+# Se NumericalMethod estiver em um arquivo chamado numerical_method.py na mesma pasta, use:
+# from numerical_method import NumericalMethod 
+# Se estiver na pasta pai, como antes:
 from .numerical_method import NumericalMethod
 
-class GalerkinMethod(NumericalMethod): 
+class GalerkinMethod(NumericalMethod):
+    """
+    Implementa o método de Galerkin para resolver EDOs de segunda ordem
+    na forma -u''(x) = f(x) com condições de contorno u(a)=0, u(b)=0.
+    """
+    
     def generate_basis_functions(self, n_terms):
         """
-        Gera funções base do tipo: x*(1 - x), x^2*(1 - x), ..., x^n*(1 - x)
-        Elas automaticamente respeitam as condições de contorno u(0) = u(1) = 0
+        Gera funções de base polinomiais que satisfazem u(a)=0 e u(b)=0.
+        Exemplo para domínio (0, 1): x*(1-x), x^2*(1-x), ...
         """
         x = sp.Symbol('x')
-        self.basis_functions = [x**n * (1 - x) for n in range(1, n_terms + 1)]
+        a, b = self.domain
+        # Forma geral para um domínio (a, b)
+        self.basis_functions = [(x - a)**n * (b - x) for n in range(1, n_terms + 1)]
 
-    def solve(self, n_terms=3, precision=1e-6):
+    def solve(self, n_terms=3):
+        """
+        Monta e resolve o sistema linear A*c = b para os coeficientes da solução.
+        """
+        # Garante que as funções de base sejam geradas
         self.generate_basis_functions(n_terms)
-
+        
         x = sp.Symbol('x')
-        u = sp.Function('u')
         
-        # Construir aproximação u_n = sum(a_i * phi_i)  
-        coeffs = [sp.Symbol(f'a{i}') for i in range(n_terms)]
-        u_approx = sum(coeffs[i] * self.basis_functions[i] for i in range(n_terms))
-        
-        # Substituir na equação diferencial
-        residual = self.equation.subs(u(x), u_approx)
+        # O método espera que self.equation seja apenas o lado direito f(x)
+        # Ex: f_x = sp.pi**2 * sp.sin(sp.pi * x)
+        f_x = self.equation
 
-        # Montar sistema linear A * a = b
+        # Inicializa a matriz A e o vetor b com zeros
         A = sp.zeros(n_terms, n_terms)
         b = sp.zeros(n_terms, 1)
 
+        # Monta a matriz A e o vetor b
         for i in range(n_terms):
             phi_i = self.basis_functions[i]
+            
+            # Calcula o elemento do vetor b
+            # b_i = integral(f(x) * phi_i(x) dx)
+            integrand_b = f_x * phi_i
+            b[i] = sp.integrate(integrand_b, (x, self.domain[0], self.domain[1]))
+            
+            # Calcula a linha da matriz A
+            # A_ij = integral(phi_j'(x) * phi_i'(x) dx)
             for j in range(n_terms):
                 phi_j = self.basis_functions[j]
-                # Para equação -u'' = f(x), temos ∫ u'' * phi_i dx = ∫ f * phi_i dx
-                # Por integração por partes: ∫ u' * phi_i' dx = ∫ f * phi_i dx
-                integrand = sp.integrate(
-                    sp.diff(phi_j, x) * sp.diff(phi_i, x),
-                    (x, self.domain[0], self.domain[1])
-                )
-                A[i, j] = integrand
-            
-            # Lado direito: assumindo equação da forma -u'' = f(x)
-            if hasattr(self.equation, 'rhs'):
-                f = -self.equation.rhs
-            else:
-                # Se a equação não tem .rhs, assumir que é da forma -u'' = 0
-                f = 0
-            rhs = sp.integrate(f * phi_i, (x, self.domain[0], self.domain[1]))
-            b[i] = rhs
+                integrand_A = sp.diff(phi_j, x) * sp.diff(phi_i, x)
+                A[i, j] = sp.integrate(integrand_A, (x, self.domain[0], self.domain[1]))
 
-        # Resolver sistema
-        A_np = np.array(A.tolist(), dtype=np.float64)
-        b_np = np.array(b.tolist(), dtype=np.float64).flatten()
-        a_np = np.linalg.solve(A_np, b_np)
+        # Converte as matrizes simbólicas para NumPy para resolver o sistema
+        # O método .tolist() e np.float64 garantem a conversão correta
+        try:
+            A_np = np.array(A.tolist()).astype(np.float64)
+            b_np = np.array(b.tolist()).astype(np.float64).flatten() # .flatten() para garantir que b seja um vetor 1D
+        except TypeError:
+            print("ERRO: Não foi possível converter a matriz A ou o vetor b para valores numéricos.")
+            print("Isso geralmente acontece se a integral não pôde ser resolvida simbolicamente.")
+            print("Vetor b simbólico:", b)
+            return None # Retorna None em caso de falha
 
-        # Construir solução aproximada
-        solution = sum(a_np[i] * self.basis_functions[i] for i in range(n_terms))
+        # Resolve o sistema linear A*c = b para encontrar os coeficientes c
+        try:
+            coeffs = np.linalg.solve(A_np, b_np)
+        except np.linalg.LinAlgError:
+            print("ERRO: A matriz A é singular e o sistema não pode ser resolvido.")
+            return None
+
+        # Constrói a solução aproximada final
+        solution = sum(coeffs[i] * self.basis_functions[i] for i in range(n_terms))
+        
         return sp.simplify(solution)

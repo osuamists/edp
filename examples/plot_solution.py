@@ -1,7 +1,5 @@
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
+# ALTERADO: A manipulação de sys.path foi removida.
+# A execução com "python -m" já cuida para que os módulos sejam encontrados.
 import sympy as sp
 import numpy as np
 import matplotlib.pyplot as plt
@@ -10,10 +8,12 @@ import matplotlib.pyplot as plt
 from core.methods.galerkin_method import GalerkinMethod
 # Exemplo futuro: from core.methods.rayleigh_ritz_method import RayleighRitzMethod
 
-# 1. Definir a EDP simbólica
+# 1. Definir os componentes da EDP: -u'' = f(x)
 x = sp.Symbol('x')
-u = sp.Function('u')
-equation = sp.diff(u(x), x, 2) + sp.pi**2 * sp.sin(sp.pi * x)
+
+# ALTERADO: Definimos APENAS o lado direito da equação, o f(x).
+f_de_x = sp.pi**2 * sp.sin(sp.pi * x)
+
 domain = (0, 1)
 boundary_conditions = [(0, 0), (1, 0)]
 
@@ -21,27 +21,39 @@ boundary_conditions = [(0, 0), (1, 0)]
 metodos = {
     "Galerkin": GalerkinMethod,
     # "Rayleigh-Ritz": RayleighRitzMethod,
-    # "Colocação": ColocacaoMethod,
     # ...
 }
 
-# 3. Avaliação dos métodos
+# 3. Preparação do Gráfico
 x_vals = np.linspace(domain[0], domain[1], 200)
 y_real = np.sin(np.pi * x_vals)
 
 plt.figure(figsize=(10, 6))
 plt.plot(x_vals, y_real, label="Solução Exata: sin(πx)", linewidth=2, color='black')
 
+# 4. Avaliação dos métodos
 for nome, classe in metodos.items():
-    metodo = classe(equation, domain, boundary_conditions)
-    solution_sym = metodo.solve(n_terms=3)
-    u_aprox = sp.lambdify(x, solution_sym, modules='numpy')
-
-    # Avaliação ponto a ponto (segura)
-    y_aprox = np.array([float(u_aprox(xi)) for xi in x_vals])
-    erro = np.max(np.abs(y_aprox - y_real))
+    print(f"--- Rodando método: {nome} ---")
     
-    plt.plot(x_vals, y_aprox, '--', label=f"{nome} (erro máx: {erro:.1e})")
+    # ALTERADO: Passamos f_de_x em vez da equação inteira para a classe.
+    metodo = classe(f_de_x, domain, boundary_conditions)
+    
+    solution_sym = metodo.solve(n_terms=3)
+
+    # NOVO: Adicionamos uma verificação para garantir que a solução foi encontrada
+    # Isso evita o erro 'NoneType' se o método solve() falhar.
+    if solution_sym is not None:
+        u_aprox_func = sp.lambdify(x, solution_sym, modules='numpy')
+
+        # Avaliação ponto a ponto
+        y_aprox = u_aprox_func(x_vals) # Usando a forma vetorizada, mais limpa
+        erro = np.max(np.abs(y_aprox - y_real))
+        
+        plt.plot(x_vals, y_aprox, '--', label=f"{nome} (erro máx: {erro:.1e})")
+        print(f"Solução encontrada. Erro máximo: {erro:.2e}")
+    else:
+        print(f"O método {nome} falhou em encontrar uma solução.")
+
 
 plt.title("Comparação dos Métodos Numéricos")
 plt.xlabel("x")
