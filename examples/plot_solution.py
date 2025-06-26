@@ -4,8 +4,10 @@ import sympy as sp
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 # Importar os métodos implementados
 from core.methods.galerkin_method import GalerkinMethod
+from core.methods.rayleigh_ritz_method import RayleighRitzMethod
 # Exemplo futuro: from core.methods.rayleigh_ritz_method import RayleighRitzMethod
 
 # 1. Definir os componentes da EDP: -u'' = f(x)
@@ -20,6 +22,7 @@ boundary_conditions = [(0, 0), (1, 0)]
 # 2. Lista de métodos a comparar
 metodos = {
     "Galerkin": GalerkinMethod,
+    "Rayleigh-Ritz": RayleighRitzMethod,
     # "Rayleigh-Ritz": RayleighRitzMethod,
     # ...
 }
@@ -28,8 +31,10 @@ metodos = {
 x_vals = np.linspace(domain[0], domain[1], 200)
 y_real = np.sin(np.pi * x_vals)
 
+
 plt.figure(figsize=(10, 6))
-plt.plot(x_vals, y_real, label="Solução Exata: sin(πx)", linewidth=2, color='black')
+plt.plot(x_vals, y_real, 'k-', linewidth=3, alpha=0.8, label="Solução Exata: sin(πx)")
+
 
 # 4. Avaliação dos métodos
 for nome, classe in metodos.items():
