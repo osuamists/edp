@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 from core.methods.galerkin_method import GalerkinMethod
 from core.methods.rayleigh_ritz_method import RayleighRitzMethod
 from core.methods.least_squares_method import LeastSquaresMethod
+from core.methods.moments_method import MomentsMethod
 
 # Exemplo futuro: from core.methods.rayleigh_ritz_method import RayleighRitzMethod
 
@@ -26,6 +27,7 @@ metodos = {
     "Galerkin": GalerkinMethod,
     "Rayleigh-Ritz": RayleighRitzMethod,
     "Least Squares": LeastSquaresMethod,
+    "Momentos": MomentsMethod
     
     # "Rayleigh-Ritz": RayleighRitzMethod,
     # ...
