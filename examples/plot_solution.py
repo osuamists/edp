@@ -10,6 +10,8 @@ from core.methods.galerkin_method import GalerkinMethod
 from core.methods.rayleigh_ritz_method import RayleighRitzMethod
 from core.methods.least_squares_method import LeastSquaresMethod
 from core.methods.moments_method import MomentsMethod
+from core.methods.colocacao_method import CollocationMethod
+from core.methods.SubregionsMethod import SubregionsMethod
 
 # Exemplo futuro: from core.methods.rayleigh_ritz_method import RayleighRitzMethod
 
@@ -27,7 +29,10 @@ metodos = {
     "Galerkin": GalerkinMethod,
     "Rayleigh-Ritz": RayleighRitzMethod,
     "Least Squares": LeastSquaresMethod,
-    "Momentos": MomentsMethod
+    "Momentos": MomentsMethod,
+    "Colocação": CollocationMethod, 
+    "Sub-regiões": SubregionsMethod,
+    # Colocação não implementado ainda
     
     # "Rayleigh-Ritz": RayleighRitzMethod,
     # ...
@@ -64,7 +69,6 @@ for nome, classe in metodos.items():
         print(f"Solução encontrada. Erro máximo: {erro:.2e}")
     else:
         print(f"O método {nome} falhou em encontrar uma solução.")
-
 
 plt.title("Comparação dos Métodos Numéricos")
 plt.xlabel("x")
