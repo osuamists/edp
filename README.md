@@ -65,8 +65,8 @@ edp/
 ### 1. Clonar o repositório
 
 ```bash
-git clone https://github.com/seu-usuario/edp-solver.git
-cd edp-solver
+git clone https://github.com/osuamists/edp.git
+cd edp
 ```
 
 ### 2. Criar ambiente virtual
