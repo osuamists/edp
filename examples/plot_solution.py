@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 # Importar os métodos implementados
 from core.methods.galerkin_method import GalerkinMethod
 from core.methods.rayleigh_ritz_method import RayleighRitzMethod
-from core.methods.least_squares_method import LeastSquaresMethod  
 # Exemplo futuro: from core.methods.rayleigh_ritz_method import RayleighRitzMethod
 
 # 1. Definir os componentes da EDP: -u'' = f(x)
@@ -24,7 +23,6 @@ boundary_conditions = [(0, 0), (1, 0)]
 metodos = {
     "Galerkin": GalerkinMethod,
     "Rayleigh-Ritz": RayleighRitzMethod,
-    "Least Squares": LeastSquaresMethod,  # Placeholder para o método de mínimos quadrados
     # "Rayleigh-Ritz": RayleighRitzMethod,
     # ...
 }
@@ -60,7 +58,6 @@ for nome, classe in metodos.items():
         print(f"Solução encontrada. Erro máximo: {erro:.2e}")
     else:
         print(f"O método {nome} falhou em encontrar uma solução.")
-
 
 plt.title("Comparação dos Métodos Numéricos")
 plt.xlabel("x")
