@@ -26,10 +26,11 @@ u(0) = 0,  u(1) = 0
 
 ## Estrutura do Projeto
 
+```
 edp/
 ├── core/
 │   ├── methods/
-│   │   ├── **init**.py
+│   │   ├── __init__.py
 │   │   ├── numerical_method.py        # Classe base
 │   │   ├── galerkin_method.py
 │   │   ├── rayleigh_ritz_method.py
@@ -37,7 +38,7 @@ edp/
 │   │   ├── moments_method.py
 │   │   ├── colocacao_method.py
 │   │   └── SubregionsMethod.py
-│   └── **init**.py
+│   └── __init__.py
 ├── examples/
 │   ├── plot_solution.py              # Script de comparação
 │   └── compare_methods.py
@@ -48,7 +49,6 @@ edp/
 ├── README.md
 ├── requirements.txt
 └── main.py
-
 ```
 
 ## Requisitos
