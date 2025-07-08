@@ -8,11 +8,6 @@ import matplotlib.pyplot as plt
 # Importar os métodos implementados
 from core.methods.galerkin_method import GalerkinMethod
 from core.methods.rayleigh_ritz_method import RayleighRitzMethod
-from core.methods.least_squares_method import LeastSquaresMethod
-from core.methods.moments_method import MomentsMethod
-from core.methods.colocacao_method import CollocationMethod
-from core.methods.SubregionsMethod import SubregionsMethod
-
 # Exemplo futuro: from core.methods.rayleigh_ritz_method import RayleighRitzMethod
 
 # 1. Definir os componentes da EDP: -u'' = f(x)
@@ -28,12 +23,6 @@ boundary_conditions = [(0, 0), (1, 0)]
 metodos = {
     "Galerkin": GalerkinMethod,
     "Rayleigh-Ritz": RayleighRitzMethod,
-    "Least Squares": LeastSquaresMethod,
-    "Momentos": MomentsMethod,
-    "Colocação": CollocationMethod, 
-    "Sub-regiões": SubregionsMethod,
-    # Colocação não implementado ainda
-    
     # "Rayleigh-Ritz": RayleighRitzMethod,
     # ...
 }
