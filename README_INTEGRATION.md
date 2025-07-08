@@ -6,10 +6,6 @@ Este sistema integra um **catálogo de EDPs** com **métodos numéricos** para r
 
 ## 📁 Estrutura do Projeto
 
-<<<<<<< HEAD
-=======
-```
->>>>>>> 34f2ef70e1c04d58ca631395b65e8cacda2495d9
 edp/
 ├── core/
 │   ├── problems.py              # Catálogo de EDPs
@@ -30,10 +26,6 @@ edp/
 │   └── test_integration.py     # Testes de integração
 └── interface/
     └── gui.py                  # Interface gráfica
-<<<<<<< HEAD
-=======
-```
->>>>>>> 34f2ef70e1c04d58ca631395b65e8cacda2495d9
 
 ## 🚀 Como Usar
 
