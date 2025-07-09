@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-import numpy as sp 
+import sympy as sp 
 
 class NumericalMethod(ABC):
     

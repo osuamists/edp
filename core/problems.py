@@ -8,7 +8,8 @@ class EDPCatalog:
         self.t = sp.Symbol('t')
         self.u = sp.Function('u')
         Q = sp.Function('Q')
-        L = sp.Symbol('L', positive=True)
+        # Usar valor numérico para L em vez de símbolo simbólico
+        L_val = 1.0  # Comprimento do domínio
         self.problems = {
             "poisson": {
                 "nome": "Poisson",
@@ -31,10 +32,10 @@ class EDPCatalog:
             "calor": {
                 "nome": "Calor 1D",
                 "equation": sp.diff(self.u(self.x, self.t), self.t) - sp.diff(self.u(self.x, self.t), self.x, 2),
-                "domain": (0, L),
+                "domain": (0, L_val),
                 "boundary_conditions": [
-                    ("dirichlet", 0, 0), ("dirichlet", L, 0),
-                    ("initial", "u", lambda x: 3*sp.sin(2*sp.pi*x/L)) # exemplo
+                    ("dirichlet", 0, 0), ("dirichlet", L_val, 0),
+                    ("initial", "u", lambda x: 3*sp.sin(2*sp.pi*x/L_val)) # exemplo
                 ],
                 "analytical": lambda x, t: None # se conhecida
             },
