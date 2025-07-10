@@ -1,23 +1,40 @@
-# Comparador de Métodos Numéricos para EDPs
+# Sistema Numérico para Equações Diferenciais Parciais - TRABALHO FINAL
 
-## Descrição
+## 🎯 Visão Geral
 
-Este projeto implementa seis métodos numéricos diretos para resolução de uma EDP unidimensional clássica, comparando soluções aproximadas com a solução exata. Inclui interface gráfica interativa e análise visual completa dos resultados.
+Este projeto implementa métodos numéricos para resolver **4 tipos fundamentais de Equações Diferenciais Parciais (EDPs)**, conforme especificado no trabalho acadêmico. O sistema suporta problemas elípticos, hiperbólicos, parabólicos e problemas 2D.
 
-## Equação Resolvida
+## 📋 Problemas Implementados
 
-**Problema de Valor de Contorno:**
+### 1. Equação de Poisson (Elíptica) ✅
+- **Equação**: `∂²Ω/∂x² = Q(x)`, onde `Q(x) = -1`
+- **Domínio**: `[0,1]` com condições `Ω(0) = Ω(1) = 0`
+- **Métodos**: Galerkin e Rayleigh-Ritz
+- **Solução analítica**: `Ω(x) = x(1-x)/2`
+- **Status**: ✅ Implementado e validado (erro < 10⁻¹⁵)
 
-```
--u''(x) = π²sin(πx),  x ∈ [0,1]
-u(0) = 0,  u(1) = 0
-```
+### 2. Equação da Onda (Hiperbólica) ✅
+- **Equação**: `∂u/∂t = λ²∂²u/∂x²`, onde `λ² = 4`
+- **Domínio**: `[0,1] × [0,T]` com `u(0,t) = 0`, `u(x,0) = 1`
+- **Método**: Wave-Galerkin com separação de variáveis
+- **Características**: Solução temporal por superposição de modos
+- **Status**: ✅ Implementado e testado
 
-**Solução Exata:** `u(x) = sin(πx)`
+### 3. Equação do Calor (Parabólica) ✅
+- **Equação**: `∂u/∂t = ∂²u/∂x²`
+- **Condições**: `u(0,t) = u(1,t) = 0`, `u(x,0) = sin(3πx/2L)`
+- **Método**: Heat-Galerkin com série de Fourier
+- **Características**: Decaimento exponencial no tempo
+- **Status**: ✅ Implementado e validado com solução analítica
 
-## Métodos Implementados
+### 4. Equação de Helmholtz 2D (Elíptica 2D) ✅
+- **Equação**: `∂²φ/∂x² + ∂²φ/∂y² + λφ = 0`
+- **Domínio**: `[0,1] × [0,γ]` com `φ = 0` nas bordas
+- **Método**: Helmholtz-2D com análise de autovalores
+- **Características**: Espectro discreto de autovalores
+- **Status**: ✅ Implementado e testado
 
-1. **Método de Galerkin** - Projeção ortogonal do resíduo
+## 🏗️ Estrutura do Projeto
 2. **Método de Rayleigh-Ritz** - Minimização funcional de energia
 3. **Método dos Mínimos Quadrados** - Minimização da norma L² do resíduo
 4. **Método dos Momentos** - Anulação de momentos do resíduo

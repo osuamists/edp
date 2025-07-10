@@ -9,48 +9,65 @@ class EDPCatalog:
         self.u = sp.Function('u')
         
         self.problems = {
-            "poisson": {
-                "nome": "Poisson",
-                # CORREÇÃO: Trocar Q(x) por função específica
-                "equation": sp.Eq(sp.diff(self.u(self.x), self.x, 2), -sp.pi**2 * sp.sin(sp.pi * self.x)),
+            # Problema 1: Equação de Poisson
+            "poisson_trabalho": {
+                "nome": "1. Equação de Poisson",
+                "equation": sp.Integer(-1),  # Q(x) = -1
+                "full_equation": sp.Eq(sp.diff(self.u(self.x), self.x, 2), -1),
                 "domain": (0, 1),
                 "boundary_conditions": [("dirichlet", 0, 0), ("dirichlet", 1, 0)],
-                "analytical": lambda x: sp.sin(sp.pi * x)  # Solução analítica conhecida
+                "analytical": self.x * (1 - self.x) / 2,  # Solução: x(1-x)/2
+                "description": "∂²Ω/∂x² = Q(x), Q(x) = -1",
+                "tipo": "eliptica"
             },
-            "onda_1d": {
-                "nome": "Onda 1D",
-                "equation": sp.Eq(sp.diff(self.u(self.x, self.t), self.t, 2), 4*sp.diff(self.u(self.x, self.t), self.x, 2)),
+            
+            # Problema 2: Equação da Onda 1D
+            "onda_trabalho": {
+                "nome": "2. Equação da Onda unidimensional", 
+                "equation": sp.Eq(sp.diff(self.u(self.x, self.t), self.t), 4*sp.diff(self.u(self.x, self.t), self.x, 2)),
+                "full_equation": sp.Eq(sp.diff(self.u(self.x, self.t), self.t), 4*sp.diff(self.u(self.x, self.t), self.x, 2)),
                 "domain": (0, 1),
                 "boundary_conditions": [
-                    ("dirichlet", 0, 0), ("dirichlet", 1, 0),
-                    ("initial", "u", lambda x: 0),
-                    ("initial", "ut", lambda x: 0)
+                    ("dirichlet", 0, 0),  # u(0,t) = 0
+                    ("initial", "u", 1)   # u(x,0) = 1
                 ],
-                "analytical": lambda x, t: None
+                "analytical": None,  # Solução depende do tempo
+                "description": "∂u/∂t = λ²∂²u/∂x², λ² = 4",
+                "tipo": "hiperbolica",
+                "lambda": 4
             },
-            "calor": {
-                "nome": "Calor 1D",
+            
+            # Problema 3: Equação do Calor
+            "calor_trabalho": {
+                "nome": "3. Equação do Calor",
                 "equation": sp.Eq(sp.diff(self.u(self.x, self.t), self.t), sp.diff(self.u(self.x, self.t), self.x, 2)),
-                "domain": (0, 1.0),
+                "full_equation": sp.Eq(sp.diff(self.u(self.x, self.t), self.t), sp.diff(self.u(self.x, self.t), self.x, 2)),
+                "domain": (0, 1),  # Assumindo L = 1
                 "boundary_conditions": [
-                    ("dirichlet", 0, 0), ("dirichlet", 1.0, 0),
-                    ("initial", "u", lambda x: 3*sp.sin(2*sp.pi*x))
+                    ("dirichlet", 0, 0),  # u(0,t) = 0
+                    ("dirichlet", 1, 0),  # u(L,t) = 0 
+                    ("initial", "u", sp.sin(3*sp.pi*self.x/2))  # u(x,0) = sin(3πx/2L)
                 ],
-                "analytical": lambda x, t: None
+                "analytical": None,  # Solução depende do tempo
+                "description": "∂u/∂t = ∂²u/∂x², f(x) = sin(3πx/2L)",
+                "tipo": "parabolica"
             },
-            "helmholtz": {
-                "nome": "Helmholtz 2D",
-                "equation": sp.Eq(sp.diff(self.u(self.x, self.y), self.x, 2) + sp.diff(self.u(self.x, self.y), self.y, 2) + 4*self.u(self.x, self.y), 0),
-                "domain": ((0, 1), (0, 1)),
-                "boundary_conditions": [("dirichlet", 0, 0), ("dirichlet", 1, 0)],
-                "analytical": lambda x, y: None
-            },
-            "test_problem": {
-                "nome": "Problema Teste u'' + u = π²sin(πx)",
-                "equation": sp.Eq(sp.diff(self.u(self.x), self.x, 2) + self.u(self.x), sp.pi**2 * sp.sin(sp.pi * self.x)),
-                "domain": (0, 1),
-                "boundary_conditions": [("dirichlet", 0, 0), ("dirichlet", 1, 0)],
-                "analytical": lambda x: sp.sin(sp.pi * x)
+            
+            # Problema 4: Equação de Helmholtz 2D
+            "helmholtz_trabalho": {
+                "nome": "4. Equação de Helmholtz",
+                "equation": sp.Eq(sp.diff(self.u(self.x, self.y), self.x, 2) + sp.diff(self.u(self.x, self.y), self.y, 2) + sp.Symbol('lambda')*self.u(self.x, self.y), 0),
+                "full_equation": sp.Eq(sp.diff(self.u(self.x, self.y), self.x, 2) + sp.diff(self.u(self.x, self.y), self.y, 2) + sp.Symbol('lambda')*self.u(self.x, self.y), 0),
+                "domain": ((0, 1), (0, sp.Symbol('gamma'))),  # [0,1] × [0,γ]
+                "boundary_conditions": [
+                    ("dirichlet", (0, "y"), 0),  # φ(0,y) = 0
+                    ("dirichlet", ("x", 0), 0),  # φ(x,0) = 0
+                    ("dirichlet", (1, "y"), 0),  # φ(1,y) = 0
+                    ("dirichlet", ("x", "gamma/4"), 0)  # φ(x,γ/4) = 0
+                ],
+                "analytical": None,  # Solução complexa
+                "description": "∂²φ/∂x² + ∂²φ/∂y² + λφ = 0",
+                "tipo": "eliptica_2d"
             }
         }
 
