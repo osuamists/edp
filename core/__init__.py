@@ -1,11 +1,13 @@
 """
-Módulo principal para resolução de Equações Diferenciais Parciais (EDPs)
+Core module for EDP (Equações Diferenciais Parciais) solver.
+Focused on solving 4 specific PDEs using Galerkin method with convergence analysis.
 """
 
-__version__ = "1.0.0"
+__version__ = "2.0.0"
 __author__ = "EDP Solver Team"
 
 from .problems import EDPCatalog
-from .comparator import EDPComparator
+from .galerkin_solver import GalerkinSolver
+from .convergence_analyzer import ConvergenceAnalyzer
 
-__all__ = ['EDPCatalog', 'EDPComparator']
+__all__ = ['EDPCatalog', 'GalerkinSolver', 'ConvergenceAnalyzer']
