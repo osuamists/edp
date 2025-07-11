@@ -13,7 +13,8 @@ class EDPCatalog:
                 "nome": "Equação de Poisson 1D",
                 "domain": (0, 1),
                 "boundary_conditions": [("dirichlet", 0, 0), ("dirichlet", 1, 0)],
-                "analytical": lambda x: np.sin(np.pi * x),
+                "analytical": lambda x: x * (1 - x),  # Solução não trivial
+                "source": lambda x: 2,  # Função fonte constante
                 "tipo": "eliptica_1d"
             },
             
@@ -24,9 +25,9 @@ class EDPCatalog:
                 "boundary_conditions": [
                     ("dirichlet", 0, 0), 
                     ("dirichlet", 1, 0),
-                    ("initial", "u", lambda x: 3*np.sin(2*np.pi*x))
+                    ("initial", "u", lambda x: x * (1 - x))  # Condição inicial não trivial
                 ],
-                "analytical": lambda x, t: 3*np.sin(2*np.pi*x)*np.exp(-4*np.pi**2*t),
+                "analytical": lambda x, t: x * (1 - x) * np.exp(-np.pi**2 * t),  # Aproximação
                 "tipo": "parabolica_1d"
             },
             
@@ -51,7 +52,7 @@ class EDPCatalog:
                     ("dirichlet", "x0", 0), ("dirichlet", "x1", 0),
                     ("dirichlet", "y0", 0), ("dirichlet", "y1", lambda x: np.sin(np.pi*x))
                 ],
-                "analytical": lambda x, y: np.sin(np.pi*x)*np.sinh(np.sqrt(4-np.pi**2)*y)/np.sinh(np.sqrt(4-np.pi**2)),
+                "analytical": lambda x, y: np.sin(np.pi*x)*np.sinh(np.sqrt(np.pi**2 + 4)*y)/np.sinh(np.sqrt(np.pi**2 + 4)),
                 "tipo": "eliptica_2d"
             }
         }

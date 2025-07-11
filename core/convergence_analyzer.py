@@ -58,7 +58,7 @@ class ConvergenceAnalyzer:
                 # Para problemas temporais, usar tempo final
                 t_final = problem.get("time_domain", (0, 1))[1]
                 if tipo == "parabolica_1d":
-                    t_final = 0.05  # Tempo menor para equação do calor
+                    t_final = 0.1  # Tempo maior para ver decay
                 
                 y_numerical = solution(x_vals, t_final)
                 y_analytical = problem["analytical"](x_vals, t_final)

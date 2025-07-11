@@ -41,20 +41,25 @@ class GalerkinSolver:
         
         for i in range(n_terms):
             for j in range(n_terms):
-                # Integrar ∫ φ''_j * φ_i dx
+                # Integrar -∫ φ''_j * φ_i dx (sinal negativo para -d²u/dx²)
                 phi_j = basis_functions[j]
                 phi_i = basis_functions[i]
                 phi_j_dd = sp.diff(phi_j, self.x, 2)
                 
-                integrand = phi_j_dd * phi_i
+                integrand = -phi_j_dd * phi_i  # Sinal negativo adicionado
                 integral, _ = quad(
                     sp.lambdify(self.x, integrand, modules='numpy'),
                     domain[0], domain[1]
                 )
                 A[i, j] = integral
             
-            # Termo fonte: ∫ f * φ_i dx onde f = π²sin(πx)
-            f = sp.pi**2 * sp.sin(sp.pi * self.x)
+            # Termo fonte: ∫ f * φ_i dx 
+            if "source" in self.problem:
+                # Função fonte constante f = 2
+                f = 2
+            else:
+                f = sp.pi**2 * sp.sin(sp.pi * self.x)  # Função fonte padrão
+            
             integrand_b = f * basis_functions[i]
             integral_b, _ = quad(
                 sp.lambdify(self.x, integrand_b, modules='numpy'),
